@@ -1,5 +1,67 @@
 # grayleafspotr News
 
+## grayleafspotr 0.99.4
+
+### Bug fixes
+
+* Fixed the Python pipeline failing on Windows (`Python pipeline failed
+  (exit status 2)`). `system2()`'s `env` argument is only honored on Windows
+  for a small set of commands (`R`, `make`) that parse `VAR=value` strings
+  from their own argv; for arbitrary executables such as `python` it was
+  silently ignored there, and those strings were instead passed through as
+  positional arguments, which Python then tried to open as a script file.
+  `PYTHONPATH`/`MPLCONFIGDIR`/`PYTHONUNBUFFERED` are now set on the R
+  process itself (restored on exit) so the child process inherits them
+  identically on every platform.
+* `system2()` calls to the Python pipeline now capture `stderr` together
+  with `stdout` so pipeline failures include the actual Python traceback
+  instead of just an exit status.
+
+### Documentation fixes
+
+* Corrected the causal organism described throughout the package
+  (`DESCRIPTION`, both vignettes) from *Cercospora zeae-maydis* /
+  *Cercospora zeicola* on maize to *Magnaporthe oryzae* — "grayleafspotr" is
+  a package name, not a claim about the maize pathogen complex.
+* Added a References section to the `grayleafspotr-workflow` vignette
+  linking to related datasets and software by the same author.
+
+## grayleafspotr 0.99.3
+
+### Breaking changes
+
+* Removed the bundled Shiny app (`launch_grayleafspotr()`, `inst/shiny/`) and
+  its deployment infrastructure (`Dockerfile`, `render.yaml`,
+  `.dockerignore`). It was unused legacy functionality; all package
+  functionality remains available through the R API.
+
+### New features
+
+* Added `plot_grayleafspot_overlay()`, which uses `EBImage` to draw the
+  detected dish boundary, colony outline, and crack segments on the source
+  plate photograph, for visual QC of the segmentation pipeline.
+
+### Bioconductor review fixes
+
+* `Depends` bumped to `R (>= 4.6.0)` to match the current Bioconductor devel
+  R pairing; added `BiocType: Software`.
+* Added ORCID to `Authors@R` and an `inst/CITATION` file.
+* `grayleafspot_download_model()` now caches via `BiocFileCache` instead of
+  `tools::R_user_dir()` + `download.file()`.
+* Narrowed two blanket `suppressWarnings()` calls to specifically-matched
+  warnings; renamed an internal function exceeding the 30-character lintr
+  limit; replaced a fixed `-1:1` range with an explicit vector; documented
+  the previously-undocumented internal `example_grayleafspot_dir()`.
+* Vignettes switched to `BiocStyle::html_document`, all chunks labeled,
+  `sessionInfo()` added to `getting-started.Rmd`, and the previously-disabled
+  "analyze your own images" / "reload saved results" chunks now run for real
+  against the bundled 06FEB test images (gated so environments without a
+  working Python/basilisk setup degrade gracefully).
+* README reorganised: Bioconductor installation instructions moved to the
+  top, developer/Python-environment setup consolidated under a "Development"
+  section, and the manual virtual environment setup instructions changed to
+  use a directory outside the package tree.
+
 ## grayleafspotr 0.99.2
 
 ### Bug fixes
